@@ -3,16 +3,30 @@ services:
     build: web/
     restart: always
     ports:
-      - "8080:5000"
+      - "5000:5000"
     environment:
-      DATABASE_URI: postgresql://db:example@db:5432/db
+      DATABASE_URI: postgresql://postgres:local@postgres:5432/postgres
+    volumes:
+      - ./web/src:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres
+    hostname: postgres
     restart: always
     shm_size: 128mb
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD: local
+      PGUSER: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+volumes:
+  db-data:
