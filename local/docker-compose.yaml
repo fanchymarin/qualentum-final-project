@@ -1,0 +1,18 @@
+services:
+  web:
+    build: web/
+    restart: always
+    ports:
+      - "8080:5000"
+    environment:
+      DATABASE_URI: postgresql://db:example@db:5432/db
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: example
+
