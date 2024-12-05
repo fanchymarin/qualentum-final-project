@@ -26,7 +26,9 @@ down:
 	docker compose --project-name=${PROJECT_NAME} down
 
 test:
-	docker compose --project-name=${PROJECT_NAME} exec web pytest --cov=app
+	docker compose --project-name=${PROJECT_NAME} --profile test up -d --wait
+	-docker compose --project-name=${PROJECT_NAME} exec web pytest --cov=app || true
+	docker compose rm -s -f -v db-test
 
 clean: down
 	docker volume rm -f ${PROJECT_NAME}_db-data

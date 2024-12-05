@@ -1,32 +1,47 @@
 services:
+  db:
+    environment:
+      PGUSER: postgres
+      POSTGRES_PASSWORD: local
+    healthcheck:
+      interval: 1s
+      retries: 5
+      test: ["CMD-SHELL", "pg_isready"]
+      timeout: 5s
+    hostname: postgres
+    image: postgres:17.2
+    restart: always
+    shm_size: 128mb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  db-test:
+    environment:
+      POSTGRES_PASSWORD: local
+    healthcheck:
+      interval: 1s
+      retries: 5
+      test: ["CMD-SHELL", "pg_isready"]
+      timeout: 5s
+    hostname: postgres-test
+    image: postgres:17.2
+    profiles: ["test"]
+    restart: always
+    shm_size: 128mb
+
   web:
     build: web/
-    restart: always
-    ports:
-      - "5000:5000"
-    environment:
-      DATABASE_URI: postgresql://postgres:local@postgres:5432/postgres
-    volumes:
-      - ./web/src:/app
     depends_on:
       db:
         condition: service_healthy
-
-  db:
-    image: postgres:17.2
-    hostname: postgres
-    restart: always
-    shm_size: 128mb
     environment:
-      POSTGRES_PASSWORD: local
-      PGUSER: postgres
+      DATABASE_URI: postgresql://postgres:local@postgres:5432/postgres
+      DATABASE_URI_TEST: postgresql://postgres:local@postgres-test:5432/postgres
+    ports:
+      - "5000:5000"
+    restart: always
     volumes:
-      - db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - ./web/src:/app
 
 volumes:
   db-data:
