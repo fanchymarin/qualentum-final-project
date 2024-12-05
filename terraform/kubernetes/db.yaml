@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: db
+    spec:
+      containers:
+        - env:
+            - name: PGUSER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: local
+          image: postgres:17.2
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+            failureThreshold: 5
+            periodSeconds: 1
+            timeoutSeconds: 5
+          name: db
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-data
+      hostname: postgres
+      restartPolicy: Always
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: db-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: db-data
+  name: db-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
