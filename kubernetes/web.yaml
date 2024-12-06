@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: web
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URI
+              value: postgresql://postgres:local@db:5432/postgres
+          image: fanchymarin/qualentum-web:latest
+          name: web
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  ports:
+    - name: "5000"
+      port: 5000
+      targetPort: 5000
+  selector:
+    name: web
