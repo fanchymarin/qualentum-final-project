@@ -6,7 +6,7 @@ This deployment is intended to be used for development and testing purposes. It 
 - `db`: A PostgreSQL database with persistent storage.
 - `db-test`: An ephemeral PostgreSQL database for testing purposes.
 
-> ![CAUTION]
+> [!CAUTION]
 > Environment is configured to `development`. Do not use it in production.
 
 ## Prerequisites
