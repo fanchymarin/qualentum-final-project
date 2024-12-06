@@ -20,7 +20,7 @@ spec:
               value: postgresql://postgres:local@postgres:5432/postgres
             - name: DATABASE_URI_TEST
               value: postgresql://postgres:local@postgres-test:5432/postgres
-          image: localhost:5001/web
+          image: 211125381571.dkr.ecr.us-east-1.amazonaws.com/qualentum/web:latest
           name: web
           ports:
             - containerPort: 5000
