@@ -1,27 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    name: db
-  name: db
+  name: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: db
+      name: postgres
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: db
+        name: postgres
     spec:
       containers:
-        - env:
-            - name: PGUSER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: local
+        - envFrom:
+            - configMapRef:
+                name: postgres-config
           image: postgres:17.2
           livenessProbe:
             exec:
@@ -30,25 +26,41 @@ spec:
             failureThreshold: 5
             periodSeconds: 1
             timeoutSeconds: 5
-          name: db
+          name: postgres
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: db-data
+              name: postgres-volume
       restartPolicy: Always
       volumes:
-        - name: db-data
+        - name: postgres-volume
           persistentVolumeClaim:
-            claimName: db-data
+            claimName: postgres-volume
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    name: db-data
-  name: db-data
+    name: postgres
+  name: postgres-volume
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 100Mi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-volume
+  labels:
+    type: local
+    name: postgres
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data/postgresql

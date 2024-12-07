@@ -15,24 +15,12 @@ spec:
         name: web
     spec:
       containers:
-        - env:
-            - name: DATABASE_URI
-              value: postgresql://postgres:local@db:5432/postgres
+        - envFrom:
+            - configMapRef:
+                name: web-config
           image: fanchymarin/qualentum-web:latest
           name: web
           ports:
             - containerPort: 5000
               protocol: TCP
       restartPolicy: Always
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: web
-spec:
-  ports:
-    - name: "5000"
-      port: 5000
-      targetPort: 5000
-  selector:
-    name: web
