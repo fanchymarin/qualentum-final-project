@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
-CMD ["bash", "manage.sh"]
+CMD ["python", "run.py"]

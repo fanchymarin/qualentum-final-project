@@ -17,6 +17,7 @@ services:
 
   db-test:
     environment:
+      PGUSER: postgres
       POSTGRES_PASSWORD: local
     healthcheck:
       interval: 1s
@@ -30,13 +31,13 @@ services:
     shm_size: 128mb
 
   web:
-    build: web/
     depends_on:
       db:
         condition: service_healthy
     environment:
       DATABASE_URI: postgresql://postgres:local@postgres:5432/postgres
       DATABASE_URI_TEST: postgresql://postgres:local@postgres-test:5432/postgres
+    image: fanchymarin/qualentum-web:latest
     ports:
       - "5000:5000"
     restart: always

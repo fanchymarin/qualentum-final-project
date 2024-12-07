@@ -14,8 +14,8 @@ list:
 	@printf "  ${GREEN}${BOLD}up      ${CYAN}- Build and run the environment using Docker Compose\n"
 	@printf "  ${GREEN}${BOLD}down    ${CYAN}- Stop the environment\n"
 	@printf "  ${GREEN}${BOLD}test    ${CYAN}- Run the tests\n"
-	@printf "  ${GREEN}${BOLD}clean   ${CYAN}- Remove the the database volume and the web Docker image\n"
-	@printf "  ${GREEN}${BOLD}fclean  ${CYAN}- Remove the the database volume and all used images\n"
+	@printf "  ${GREEN}${BOLD}clean   ${CYAN}- Remove the database volume\n"
+	@printf "  ${GREEN}${BOLD}fclean  ${CYAN}- Remove the database volume and all used images\n"
 	@printf "  ${GREEN}${BOLD}re      ${CYAN}- Rebuild the environment (clean + up)\n"
 	@echo
 
@@ -32,10 +32,9 @@ test:
 
 clean: down
 	docker volume rm -f ${PROJECT_NAME}_db-data
-	docker rmi -f ${PROJECT_NAME}-web
 
 fclean: clean
-	docker rmi -f postgres:17.2
+	docker rmi -f postgres:17.2 fanchymarin/qualentum-web:latest
 
 re: clean up
 
