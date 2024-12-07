@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    name: postgres
+data: # TODO: delete hardcoded credentials
+  POSTGRES_DB: postgresdb
+  POSTGRES_USER: postgres
+  PGUSER: postgres
+  POSTGRES_PASSWORD: test
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+  labels:
+    name: web
+data: # TODO: delete hardcoded credentials
+  DATABASE_URI: postgresql://postgres:test@postgres:5432/postgresdb

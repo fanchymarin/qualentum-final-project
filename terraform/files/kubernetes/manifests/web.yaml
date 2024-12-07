@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: web
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: web-config
+          image: fanchymarin/qualentum-web:latest
+          name: web
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+      restartPolicy: Always
