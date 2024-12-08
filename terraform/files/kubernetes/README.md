@@ -1,4 +1,4 @@
-# Kubernetes cluster
+# Local Kubernetes cluster
 
 It creates the following pods:
 
